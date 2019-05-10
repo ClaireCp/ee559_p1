@@ -14,14 +14,14 @@ import copy
 
 nb_classes_digits = 10
 nb_classes_pairs = 2
-alpha = 1  # hyperparameter
+alpha = 0.3  # hyperparameter
 
 def train_model_aux(model, train_input, train_target, train_classes, test_input, test_target, test_classes, optimizer, mini_batch_size=1000, nb_epochs=300, verbose=True):
     train_target = train_target.type(torch.FloatTensor).view(-1, 1) # from torch.Size([1000]) to torch.Size([1000, 1]) for BCEWithLogits
     nb_samples = len(train_input)
     criterion1 = torch.nn.CrossEntropyLoss()
     criterion2 = torch.nn.BCEWithLogitsLoss()  
-    alpha = 1 # hyperparameter
+    alpha = 0.3 # hyperparameter
     
     val_acc_history = []
     test_acc_history = []
