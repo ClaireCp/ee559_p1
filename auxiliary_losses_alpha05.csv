@@ -1,0 +1,5 @@
+Model,Number of parameters,Learning rate,Number of epochs,Training time,Mean best training accuracy,Std best training accuracy,Mean test accuracy,Std test accuracy
+Incept1,175027,0.01,100,63.35,0.7651,0.016,0.7059,0.0116
+Incept2,384307,0.01,100,147.12,0.7931,0.0082,0.6964,0.0203
+Incept3,64483,0.01,500,320.76,0.943,0.0347,0.6845,0.0107
+Incept4,247253,0.01,100,63.48,0.7599,0.0211,0.7101,0.0156
