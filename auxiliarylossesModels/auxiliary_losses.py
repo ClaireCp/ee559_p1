@@ -1,3 +1,4 @@
+from __future__ import division
 import torch
 from torch import nn, optim
 from torch.nn import functional as F
@@ -63,7 +64,7 @@ def train_model_aux(model, train_input, train_target, train_classes, test_input,
             epoch_loss = running_loss / nb_samples
             epoch_acc = running_corrects.double() / nb_samples
             
-            if verbose and (e % 100 == 99):
+            if verbose and (e % 10 == 9):
                 print('phase: %s, epoch: %d, loss: %.5f, acc: %.4f' %
                       (phase, e+1, epoch_loss, epoch_acc))
                 
@@ -90,7 +91,7 @@ def test_model_aux(model, test_input, test_target):
     _, _, test_output = model(test_input) 
     output_to_prediction = torch.ge(torch.sigmoid(test_output), 0.5).flatten()
     nb_correct = (output_to_prediction == test_target.type(torch.ByteTensor)).sum().item()
-    acc_pairs = nb_correct / len(test_input)
+    acc_pairs = nb_correct/ len(test_input)
     return acc_pairs
 
 ######################################################################

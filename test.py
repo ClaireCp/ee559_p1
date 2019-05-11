@@ -38,7 +38,7 @@ def multiple_training_runs_fn(model_ref, train_fn, test_fn, title,  nb_runs, lr,
         
         # and create a new instance of our model to have new random initial weights
         model = model_ref.return_new()       
-        optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=0.95)
+        optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=0.95, weight_decay= 0.005)
         
         model, time_elapsed, best_acc, val_acc_history, test_acc_history = train_fn(model, train_input, train_target, train_classes, test_input, test_target, test_classes, optimizer, mini_batch_size, nb_epochs, verbose)
         list_time.append(time_elapsed)
