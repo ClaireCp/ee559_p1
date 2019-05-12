@@ -1,4 +1,0 @@
-Model,Number of parameters,Learning rate,Number of epochs,Training time,Mean best training accuracy,Std best training accuracy,Mean test accuracy,Std test accuracy
-BaseNet2C,119001,0.01,100,9.5,0.8675,0.0163,0.77,0.0
-ConvNet1_2C,70705,0.01,200,150.77,1.0,0.0,0.83,0.0057
-ConvNet2_2C,232145,0.01,150,233.86,1.0,0.0,0.8435,0.0148
