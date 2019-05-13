@@ -64,7 +64,7 @@ def train_model_aux(model, train_input, train_target, train_classes, test_input,
             epoch_loss = running_loss / nb_samples
             epoch_acc = running_corrects.double() / nb_samples
             
-            if verbose and (e % 10 == 9):
+            if verbose and (e % 100 == 99):
                 print('phase: %s, epoch: %d, loss: %.5f, acc: %.4f' %
                       (phase, e+1, epoch_loss, epoch_acc))
                 
