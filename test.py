@@ -1,63 +1,70 @@
+""" Relevant imports and global variables """
 import torch
-from torch import nn, optim
-import sys
-sys.path.insert(0, "../")
+torch.manual_seed(1234)
 from generic_helpers import *
-from torchvision import datasets
-import dlc_practical_prologue as prologue
+import sys
 
-def load_random_datasets():
-    """ Function to generate new random training and test sets for various runs """
-    train_input, train_target, train_classes, test_input, test_target, test_classes = \
-    prologue.generate_pair_sets(nb=1000)
-    
-    """ Feature Normalization: We normalize the train and test datasets with the mean and variance of the training set 
-    (we don't want to introduce information of the test set into the training by normalizing over the whole dataset)"""
-    train_input, mean_input, std_input = standardize(train_input)
-    test_input = (test_input - mean_input) / std_input
-    
-    return train_input, train_target, train_classes, test_input, test_target, test_classes
+mini_batch_size = 250
+nb_runs = 10
+lr = 0.01
 
+######### _1CHANNEL2IMAGES #############################################################
+sys.path.insert(0, "channelimagesModels")
+from BaseNet import *
+from ConvNet1 import *
+from _1channel2images import *
+print("Working with 1channel2images framework, nb_classes = ", nb_classes)
 
-######################################################################
-""" Generic function for multiple training runs for _2channels1image, weight_sharing and  auxiliary_losses.
-Arguments:
-    train_fn: reference to the train_model() function of the current framework 
-    test_fn: reference to the test_model() function of the current framework 
-    title: title for the figure plots """
-def multiple_training_runs_fn(model_ref, train_fn, test_fn, title,  nb_runs, lr, mini_batch_size=1000, nb_epochs=300, verbose=True, plot=True):
-    list_time = []
-    list_best_acc = [] # (best) accuracy on training set
-    list_acc_test = [] # accuracy on test set
-    list_val_acc_history = []
-    list_test_acc_history = []
-            
-    for i in range(nb_runs):
-        # We load new random training and test sets
-        train_input, train_target, train_classes, test_input, test_target, test_classes = load_random_datasets()
-        
-        # and create a new instance of our model to have new random initial weights
-        model = model_ref.return_new()       
-        optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=0.95, weight_decay= 0.005)
-        
-        model, time_elapsed, best_acc, val_acc_history, test_acc_history = train_fn(model, train_input, train_target, train_classes, test_input, test_target, test_classes, optimizer, mini_batch_size, nb_epochs, verbose)
-        list_time.append(time_elapsed)
-        list_best_acc.append(best_acc)
-        list_val_acc_history.append(val_acc_history)
-        list_test_acc_history.append(test_acc_history)
-  
-        acc_test = test_fn(model, test_input, test_target)
-        list_acc_test.append(acc_test)
-        
-    if plot == True:
-        title = title.format(model.name)
-        
-        mean_val_acc_history, std_val_acc_history = mean_per_epoch_list(list_val_acc_history)
-        mean_test_acc_history, std_test_acc_history = mean_per_epoch_list(list_test_acc_history)
-        plot_history(mean_val_acc_history, std_val_acc_history, mean_test_acc_history, std_test_acc_history, title)
-        
-    mean_time, std_time = compute_properties(list_time)
-    mean_best_acc, std_best_acc = compute_properties(list_best_acc)
-    mean_acc_test, std_acc_test = compute_properties(list_acc_test)
+model1C_list = [BaseNet1C(), ConvNet1_1C()]
+nb_epochs = 30
+for model_1C in model1C_list:
+    test_results_1C = multiple_training_runs_1C(model_1C, nb_runs, lr, mini_batch_size, nb_epochs, verbose=False)
+    write_to_csv_1C('1channel2images.csv', model_1C, test_results_1C, lr, nb_epochs)
+    print("For model {}, mean test accuracy = {}".format(model_1C.name, test_results_1C[6]))
     
-    return mean_time, std_time, mean_best_acc, std_best_acc, mean_acc_test, std_acc_test
+    
+######### _2CHANNELS1IMAGE #############################################################
+from _2channels1image import *
+print("Working with 2channels1image framework, nb_classes = ", nb_classes)
+model2C_list = [BaseNet2C(), ConvNet1_2C(), ConvNet2_2C(), ConvNet4_2C()]
+nb_epochs = 75
+for model_2C in model2C_list:
+    test_results_2C = multiple_training_runs_fn(model_2C, train_model_2C, test_model_2C, title_2C, nb_runs, lr, mini_batch_size, nb_epochs, verbose=False)
+    write_to_csv('2channels1image.csv', model_2C, test_results_2C, lr, nb_epochs)
+    print("For model {}, mean test accuracy = {}".format(model_2C.name, test_results_2C[4]))
+    
+    
+######### WEIGHT_SHARING ###############################################################
+sys.path.insert(0, "weightssharingModels")
+from NetSharing import *
+from weight_sharing import *
+print("Working with weight_sharing framework")
+modelws_list = [NetSharing1(), NetSharing2(), NetSharing3(), NetSharing4()]
+nb_epochs = 75
+for model_ws in modelws_list:
+    test_results_ws = multiple_training_runs_fn(model_ws, train_model_ws, test_model_ws, title_ws, nb_runs, lr, mini_batch_size, nb_epochs, verbose=False)
+    write_to_csv('weightsharing.csv', model_ws, test_results_ws, lr, nb_epochs)
+    print("For model {}, mean test accuracy = {}".format(model_ws.name, test_results_ws[4]))
+
+    
+######### AUXILIARY_LOSSES #############################################################
+sys.path.insert(0, "auxiliarylossesModels")  
+from Incept import *
+from auxiliary_losses import *
+print("Working with auxiliary_losses framework")
+modelaux_list = [Incept1a(), Incept1b(), Incept2(), Incept3(), Incept4()]
+nb_epochs = 60
+for model_aux in modelaux_list:
+    test_results_aux = multiple_training_runs_fn(model_aux, train_model_aux, test_model_aux, title_aux, nb_runs, lr, mini_batch_size, nb_epochs, verbose=False)
+    write_to_csv('auxiliary_losses.csv', model_aux, test_results_aux, lr, nb_epochs)
+    print("For model {}, mean test accuracy = {}".format(model_aux.name, test_results_aux[4]))
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

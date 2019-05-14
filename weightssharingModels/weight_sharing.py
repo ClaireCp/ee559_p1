@@ -10,4 +10,4 @@ from _2channels1image import test_model_2C
 train_model_ws = train_model_2C
 test_model_ws = test_model_2C
 
-title_ws = 'Plot for 10 runs with weight_sharing framework (binary cross-entropy loss) and model = {}, \n accuracy obtained during training (model in eval mode) on the training set, and on the test set'
+title_ws = 'Plot for 20 runs with weight_sharing framework (binary cross-entropy loss) and model = {}, \n accuracy obtained during training (model in eval mode) on the training set, and on the test set'

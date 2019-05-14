@@ -96,4 +96,4 @@ def test_model_aux(model, test_input, test_target):
 
 ######################################################################
 
-title_aux = 'Plot for 10 runs with auxiliary_losses framework (binary cross-entropy + auxiliary cross-entropy losses) and model = {}, \n accuracy obtained during training (model in eval mode) on the training set, and on the test set'
+title_aux = 'Plot for 20 runs with auxiliary_losses framework (binary cross-entropy + auxiliary cross-entropy losses) and model = {}, \n accuracy obtained during training (model in eval mode) on the training set, and on the test set'

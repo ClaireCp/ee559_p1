@@ -87,4 +87,4 @@ def test_model_2C(model, test_input, test_target):
 
 ######################################################################
 
-title_2C = 'Plot for 10 runs with _2channels1image framework (binary cross-entropy loss) and model = {}, \n accuracy obtained during training (model in eval mode) on the training set, and on the test set \n Note: here, the accuracy is for the task "predicting first digit le second digit"'
+title_2C = 'Plot for 20 runs with _2channels1image framework (binary cross-entropy loss) and model = {}, \n accuracy obtained during training (model in eval mode) on the training set, and on the test set \n Note: here, the accuracy is for the task "predicting first digit le second digit"'

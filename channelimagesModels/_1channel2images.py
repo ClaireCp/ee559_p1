@@ -134,7 +134,7 @@ def multiple_training_runs_1C(model_ref, nb_runs, lr, mini_batch_size=1000, nb_e
         list_acc_pairs.append(acc_pairs)
         
     if plot == True:
-        title = 'Plot for 10 runs with _1channel2images framework (cross-entropy loss) and model = {}, \n accuracy obtained during training (model in eval mode) on the training set, and on the test set \n Note: here, the accuracy is for the task "predicting digits"'.format(model.name)
+        title = 'Plot for 20 runs with _1channel2images framework (cross-entropy loss) and model = {}, \n accuracy obtained during training (model in eval mode) on the training set, and on the test set \n Note: here, the accuracy is for the task "predicting digits"'.format(model.name)
         mean_val_acc_history, std_val_acc_history = mean_per_epoch_list(list_val_acc_history)
         mean_test_acc_history, std_test_acc_history = mean_per_epoch_list(list_test_acc_history)
         plot_history(mean_val_acc_history, std_val_acc_history, mean_test_acc_history, std_test_acc_history, title)
@@ -171,17 +171,16 @@ def check_overwrite(filename, model, lr, nb_epochs, row_to_write):
 def write_to_csv_1C(filename, model, test_results, lr, nb_epochs):
     nb_params = count_parameters(model)
     row = [model.name, nb_params, lr, nb_epochs, round(test_results[0], 2), 
-           round(test_results[2], 4), round(test_results[3], 4), 
-           round(test_results[4], 4), round(test_results[5], 4)]
+           round(test_results[4], 4), round(test_results[5], 4), 
+           round(test_results[6], 4), round(test_results[6], 4)]
     
     try: file = open(filename, 'r')
     except FileNotFoundError:
-        csvData = [['Model', 'Number of parameters', 'Learning rate', 'Number of epochs', 'Training time', 'Mean digits accuracy (test set)', 'Std digits accuracy', 'Mean accuracy (test set)', 'Std accuracy']]
+        csvData = [['Model', 'Number of parameters', 'Learning rate', 'Number of epochs', 'Training time', 'Mean digits accuracy (test set)', 'Std digits accuracy', 'Mean pairs accuracy (test set)', 'Std pairs accuracy']]
         with open('1channel2images.csv', 'w') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerows(csvData)
         csvFile.close()
-        return
         
     overwrite = check_overwrite(filename, model, lr, nb_epochs, row)
     if overwrite == False:    
