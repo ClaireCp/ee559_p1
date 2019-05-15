@@ -8,7 +8,7 @@ sys.path.insert(0, "../")
 from generic_helpers import plot_history
 from generic_helpers import compute_properties
 from generic_helpers import mean_per_epoch_list
-from test import load_random_datasets
+from generic_helpers import load_random_datasets
 from generic_helpers import count_parameters
 
 import time

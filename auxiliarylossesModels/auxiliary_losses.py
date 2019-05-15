@@ -22,7 +22,7 @@ def train_model_aux(model, train_input, train_target, train_classes, test_input,
     nb_samples = len(train_input)
     criterion1 = torch.nn.CrossEntropyLoss()
     criterion2 = torch.nn.BCEWithLogitsLoss()  
-    alpha = 0.3 # hyperparameter
+    alpha = 5 # hyperparameter
     
     val_acc_history = []
     test_acc_history = []
@@ -96,4 +96,4 @@ def test_model_aux(model, test_input, test_target):
 
 ######################################################################
 
-title_aux = 'Plot for 20 runs with auxiliary_losses framework (binary cross-entropy + auxiliary cross-entropy losses) and model = {}, \n accuracy obtained during training (model in eval mode) on the training set, and on the test set'
+title_aux = 'Plot for 20 runs with auxiliary_losses framework (BCE + auxiliary CE losses) and model = {}, \n accuracy obtained during training (model in eval mode) on the training set, and on the test set'

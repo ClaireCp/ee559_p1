@@ -112,16 +112,16 @@ class Incept2(nn.Module):
         return Incept2()
     
     
-class Incept3(nn.Module): #0.83 with nb_hidden=100
+class Incept3(nn.Module):
     """ Built upon NetSharing3 (same CNN and same number of hidden units for siamese MLP) """
-    def __init__(self, nb_classes_digits=10, nb_classes_pairs=1, nb_hidden=10):
+    def __init__(self, nb_classes_digits=10, nb_classes_pairs=1, nb_hidden=40):
         super(Incept3, self).__init__()
         self.name = "Incept3"
         self.conv1 = nn.Conv2d(1, 4, kernel_size=3)
         self.conv2 = nn.Conv2d(4, 8, kernel_size=4)
         self.conv3 = nn.Conv2d(8, 12, kernel_size=3)
         self.fc1 = nn.Linear(48, nb_hidden)
-        self.fc2 = nn.Linear(48, nb_classes_pairs)
+        self.fc2 = nn.Linear(nb_hidden, nb_classes_pairs)
         self.fc3 = nn.Linear(nb_hidden, nb_classes_digits)
         self.drop = nn.Dropout(p=0)
  
@@ -131,14 +131,14 @@ class Incept3(nn.Module): #0.83 with nb_hidden=100
         x_list = [x0, x1]
         res = []
         res_aux = []
-        for x in x_list:
+        for x in x_list: # Shared (CNN + 1FC layer) and MLP for auxiliary losses
             x = F.relu(F.max_pool2d(self.conv1(x), kernel_size=2, stride=1))
             x = F.relu(F.max_pool2d(self.conv2(x), kernel_size=2, stride=1))
             x = F.relu(F.max_pool2d(self.conv3(x), kernel_size=2, stride=2))
             x = x.view(-1, 48)
+            x = self.drop(F.relu(self.fc1(x))) # Additional shared linear layer!
             res.append(x)
-            x_aux = self.drop(F.relu(self.fc1(x)))
-            x_aux = self.fc3(x_aux)
+            x_aux = self.fc3(x)
             res_aux.append(x_aux)
         x = res[0] - res[1]
         x = self.fc2(x)
@@ -150,7 +150,7 @@ class Incept3(nn.Module): #0.83 with nb_hidden=100
 
 class Incept4(nn.Module):
     """ Built upon NetSharing4 (same CNN and same number of hidden units for siamese MLP) """
-    def __init__(self, nb_classes_digits=10, nb_classes_pairs=1, nb_hidden=10):
+    def __init__(self, nb_classes_digits=10, nb_classes_pairs=1, nb_hidden=40):
         super(Incept4, self).__init__()
         self.name = "Incept4"
         self.conv1 = nn.Conv2d(1, 4, kernel_size=3)
@@ -159,7 +159,7 @@ class Incept4(nn.Module):
         self.fc2 = nn.Linear(nb_hidden, nb_classes_pairs)
         self.fc3 = nn.Linear(nb_hidden, nb_classes_digits)
         self.drop = nn.Dropout(p=0.15)
- 
+
     def forward(self, x):
         x0 = x[:,0,:,:].view(-1,1,14,14)
         x1 = x[:,1,:,:].view(-1,1,14,14)
@@ -170,14 +170,13 @@ class Incept4(nn.Module):
             x = F.relu(F.max_pool2d(self.conv1(x), kernel_size=2, stride=1))
             x = F.relu(F.max_pool2d(self.conv2(x), kernel_size=2, stride=2))
             x = x.view(-1, 96)
-            x = self.drop(F.relu(self.fc1(x)))
+            x = self.drop(F.relu(self.fc1(x))) # Additional shared linear layer!
             res.append(x)
             x_aux = self.fc3(x)
-            res_aux.append(x)
+            res_aux.append(x_aux)
         x = res[0] - res[1]
         x = self.fc2(x)
         return res_aux[0], res_aux[1], x
     
     def return_new(self):
         return Incept4()
-    
